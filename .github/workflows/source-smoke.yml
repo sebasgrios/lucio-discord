@@ -1,0 +1,22 @@
+name: Source smoke test
+
+on:
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  youtube-metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Install pinned yt-dlp
+        run: |
+          curl --fail --location https://github.com/yt-dlp/yt-dlp/releases/download/2026.08.19/yt-dlp --output /usr/local/bin/yt-dlp
+          echo "1fa6733c37ea6fb51c99ad8fe785e7b7e5f3246c9b980230329d4fb72ed8d4d6  /usr/local/bin/yt-dlp" | sha256sum --check --strict
+          chmod +x /usr/local/bin/yt-dlp
+      - name: Resolve a short public test video
+        run: yt-dlp --simulate --no-playlist https://www.youtube.com/watch?v=jNQXAC9IVRw
